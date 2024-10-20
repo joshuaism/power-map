@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import { Routes, Route } from "react-router-dom";
+import About from "./components/About";
+import Header from "./components/Header";
+import "./App.css";
+import PowerMap from "./components/PowerMap";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <Routes>
+        <Route path="/" element={<PowerMap />} />
+        <Route path="/power-map" element={<PowerMap />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/power-map/about" element={<About />} />
+      </Routes>
     </div>
   );
 }
