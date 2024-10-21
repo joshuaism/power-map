@@ -10,9 +10,7 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<PowerMap />} />
-        <Route path="/power-map" element={<PowerMap />} />
         <Route path="/about" element={<About />} />
-        <Route path="/power-map/about" element={<About />} />
       </Routes>
     </div>
   );
