@@ -30,12 +30,17 @@ function useNodeService() {
   }
 
   function createEdge(sourceId, data) {
+    let color = "#76957E";
+    if (data.connected_category_id === 4) color = "#7C98B3";
+    if (data.connected_category_id === 8) color = "#536B78";
     return {
       id: String(data.connected_relationship_ids),
       source: String(sourceId),
       target: String(data.id),
       label: "connection",
-      size: 5,
+      size: 2,
+      fill: color,
+      data: data,
     };
   }
 
@@ -43,6 +48,8 @@ function useNodeService() {
     return {
       id: String(data.id),
       label: data.name ? String(data.name) : String(data.label),
+      fill: data.types[0] === "Person" ? "#66B3BA" : "#9AB87A",
+      data: data,
     };
   }
 
@@ -50,6 +57,7 @@ function useNodeService() {
     if (!target) {
       return;
     }
+    console.log(target);
     console.log(`Get connections for ${target.id}: ${target.label}`);
     let response = await fetch(
       `https://littlesis.org/api/entities/${target.id}/connections/?category_id=8`
@@ -78,7 +86,7 @@ function useNodeService() {
             );
           }
         }
-        createEdgesAndNodes(target, allData);
+        createEdgesAndNodes(target.data, allData);
       }
     }
   }
@@ -114,6 +122,7 @@ function useNodeService() {
             nameMap.set(element.attributes.id, {
               label: element.attributes.name,
               id: element.attributes.id,
+              data: element.attributes,
             });
           });
           let newNames = [...nameMap.values()];
