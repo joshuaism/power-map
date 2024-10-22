@@ -25,7 +25,9 @@ export default function PowerMap() {
         disablePortal
         options={names}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Person" />}
+        renderInput={(params) => (
+          <TextField {...params} label="Person or Company" />
+        )}
       />
       <div style={{ position: "fixed", width: "90%", height: "75%" }}>
         <GraphCanvas
