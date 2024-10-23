@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 function useNodeService() {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
   const [names, setNames] = useState([]);
+  const [expandedNodes, setExpandedNodes] = useState([]);
   const [tooltip, setTooltip] = useState("");
 
   function createEdgesAndNodes(parentNode, array) {
@@ -40,7 +41,6 @@ function useNodeService() {
       label: "connection",
       size: 2,
       fill: color,
-      data: data,
     };
   }
 
@@ -57,37 +57,44 @@ function useNodeService() {
     if (!target) {
       return;
     }
-    console.log(target);
-    console.log(`Get connections for ${target.id}: ${target.label}`);
-    let response = await fetch(
-      `https://littlesis.org/api/entities/${target.id}/connections/?category_id=8`
-    );
-    if (response.ok) {
-      let json = await response.json();
-      let response2 = await fetch(
-        `https://littlesis.org/api/entities/${target.id}/connections/?category_id=4`
+    if (expandedNodes.includes(target.id)) {
+      return;
+    }
+    try {
+      console.log(`Get connections for ${target.id}: ${target.label}`);
+      let response = await fetch(
+        `https://littlesis.org/api/entities/${target.id}/connections/?category_id=8`
       );
-      if (response2.ok) {
-        let json2 = await response2.json();
-        let allData = json.data;
-        allData.push(...json2.data);
-        console.log(
-          `Found ${allData.length} close connections for ${target.label}`
+      if (response.ok) {
+        let json = await response.json();
+        let response2 = await fetch(
+          `https://littlesis.org/api/entities/${target.id}/connections/?category_id=4`
         );
-        if (allData.length < 8) {
-          let response3 = await fetch(
-            `https://littlesis.org/api/entities/${target.id}/connections/`
+        if (response2.ok) {
+          let json2 = await response2.json();
+          let allData = json.data;
+          allData.push(...json2.data);
+          console.log(
+            `Found ${allData.length} close connections for ${target.label}`
           );
-          if (response.ok) {
-            let json3 = await response3.json();
-            allData = json3.data;
-            console.log(
-              `Found ${allData.length} total connections for ${target.label}`
+          if (allData.length < 8) {
+            let response3 = await fetch(
+              `https://littlesis.org/api/entities/${target.id}/connections/`
             );
+            if (response.ok) {
+              let json3 = await response3.json();
+              allData = json3.data;
+              console.log(
+                `Found ${allData.length} total connections for ${target.label}`
+              );
+            }
           }
+          createEdgesAndNodes(target.data, allData);
+          setExpandedNodes([...expandedNodes, target.id]);
         }
-        createEdgesAndNodes(target.data, allData);
       }
+    } catch {
+      setTooltip("Network Error: Please try again after a brief pause.");
     }
   }
 
