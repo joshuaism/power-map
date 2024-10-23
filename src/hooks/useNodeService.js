@@ -16,7 +16,6 @@ function useNodeService() {
     edges.forEach((element) => {
       edgeMap.set(element.id, element);
     });
-    console.log(parentNode);
     nodeMap.set(parentNode.id, createNode(parentNode));
     array.forEach((element) => {
       let node = createNode(element.attributes);
@@ -39,7 +38,7 @@ function useNodeService() {
       source: String(sourceId),
       target: String(data.id),
       label: "connection",
-      size: 2,
+      size: 4,
       fill: color,
     };
   }
@@ -112,6 +111,10 @@ function useNodeService() {
     }
   }
 
+  function getEntityName(target) {
+    setTooltip(target.label);
+  }
+
   async function getNames(target) {
     let val = target.target._valueTracker.getValue();
     if (val) {
@@ -149,6 +152,7 @@ function useNodeService() {
     getNames,
     addNodesAndEdges,
     getRelationship,
+    getEntityName,
   };
 }
 

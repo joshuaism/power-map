@@ -3,6 +3,7 @@ import { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import useNodeService from "../hooks/useNodeService";
+import InfoBox from "./InfoBox";
 
 export default function PowerMap() {
   const {
@@ -13,8 +14,10 @@ export default function PowerMap() {
     getNames,
     addNodesAndEdges,
     getRelationship,
+    getEntityName,
   } = useNodeService();
   const [collapsedNodes, setCollapsedNodes] = useState([]);
+  const [selectedData, setSelectedData] = useState("");
 
   function collapseNode(node) {
     if (!collapsedNodes.includes(node.id)) {
@@ -23,6 +26,7 @@ export default function PowerMap() {
   }
 
   function expandNode(node) {
+    setSelectedData({ type: "node", data: node });
     if (collapsedNodes.includes(node.id)) {
       setCollapsedNodes(collapsedNodes.filter((value) => value !== node.id));
     }
@@ -35,7 +39,6 @@ export default function PowerMap() {
       <Autocomplete
         onKeyUp={getNames}
         onChange={(event, newValue) => {
-          console.log(newValue);
           addNodesAndEdges(newValue);
         }}
         disablePortal
@@ -45,19 +48,40 @@ export default function PowerMap() {
           <TextField {...params} label="Person or Company" />
         )}
       />
-      <div style={{ position: "fixed", width: "90%", height: "75%" }}>
+      <div
+        style={{
+          float: "left",
+          position: "fixed",
+          width: "70%",
+          height: "100%",
+        }}
+      >
         <GraphCanvas
-          onNodeClick={(node) => expandNode(node)}
-          onNodeDoubleClick={(node) => collapseNode(node)}
+          onNodePointerOver={getEntityName}
+          onNodeClick={expandNode}
+          onNodeDoubleClick={collapseNode}
           collapsedNodeIds={collapsedNodes}
           onEdgePointerOver={getRelationship}
+          onEdgeClick={(edge) => {
+            getRelationship(edge);
+            setSelectedData({ type: "edge", data: edge });
+          }}
           edgeArrowPosition="none"
           draggable
           nodes={nodes}
           edges={edges}
         />
       </div>
-      <h2 style={{ position: "absolute", bottom: "0", width: "90%" }}>
+      <div
+        style={{
+          float: "right",
+          width: "30%",
+          height: "100%",
+        }}
+      >
+        <InfoBox data={selectedData} />
+      </div>
+      <h2 style={{ position: "fixed", bottom: "0", width: "90%" }}>
         {tooltip}
       </h2>
     </>
