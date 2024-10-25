@@ -34,8 +34,7 @@ export default function PowerMap() {
         `node ${psuedoNode.id}: ${psuedoNode.label} not found. Creating Node.`
       );
       addNodesAndEdges(psuedoNode);
-      // TODO: create InfoBoxNode that is populated by node id
-      //setSelectedData({ type: "node", data: node });
+      setSelectedData({ type: "node", data: psuedoNode });
     }
   }
 
