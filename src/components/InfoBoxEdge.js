@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function InfoBoxEdge({ id }) {
+function InfoBoxEdge({ id, createNode }) {
   const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
@@ -11,7 +11,6 @@ function InfoBoxEdge({ id }) {
         );
         if (response.ok) {
           let json = await response.json();
-          console.log("set data for " + id);
           let relationship = populateRelationship(json);
           setApiData(relationship);
         }
@@ -23,14 +22,14 @@ function InfoBoxEdge({ id }) {
   }, []);
 
   function populateRelationship(json) {
-    let firstEntityName =
+    let firstEntity =
       json.data.attributes.entity1_id === json.included[0].id
-        ? json.included[0].attributes.name
-        : json.included[1].attributes.name;
-    let secondEntityName =
+        ? json.included[0].attributes
+        : json.included[1].attributes;
+    let secondEntity =
       json.data.attributes.entity2_id === json.included[0].id
-        ? json.included[0].attributes.name
-        : json.included[1].attributes.name;
+        ? json.included[0].attributes
+        : json.included[1].attributes;
     let amount = json.data.attributes.amount;
     if (amount) {
       amount = amount.toLocaleString(undefined, {
@@ -48,10 +47,8 @@ function InfoBoxEdge({ id }) {
       endDate = new Date(endDate).toLocaleDateString(undefined, options);
     }
     return {
-      firstEntityName: firstEntityName,
-      secondEntityName: secondEntityName,
-      firstEntityId: json.data.attributes.entity1_id,
-      secondEntityId: json.data.attributes.entity2_id,
+      firstEntity: firstEntity,
+      secondEntity: secondEntity,
       firstEntityDescription: json.data.attributes.description1,
       secondEntityDescription: json.data.attributes.description2,
       category: json.data.attributes.category_id,
@@ -64,11 +61,91 @@ function InfoBoxEdge({ id }) {
     };
   }
 
+  function EdgeComponent({ data }) {
+    if (data.category === 5) {
+      let description = data.amount
+        ? data.description.replace("money", data.amount)
+        : data.description;
+      return (
+        <div>
+          <p>{description}</p>
+          <p>
+            <a href={data.link} target="_blank">
+              link
+            </a>
+          </p>
+        </div>
+      );
+    }
+    if (data.category === 3) {
+      return (
+        <div>
+          <p>{data.description}</p>
+          <Entity
+            entity={data.firstEntity}
+            description={data.firstEntityDescription}
+          />
+          <Entity
+            entity={data.secondEntity}
+            description={data.secondEntityDescription}
+          />
+          {data.startDate || data.endDate ? (
+            <p>
+              {data.startDate} - {data.endDate}
+            </p>
+          ) : null}
+          <p>
+            <a href={data.link} target="_blank">
+              link
+            </a>
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div>
+        <p>{data.description}</p>
+        <Entity
+          entity={data.firstEntity}
+          description={data.firstEntityDescription}
+        />
+        <Entity
+          entity={data.secondEntity}
+          description={data.secondEntityDescription}
+        />
+        <p>{data.amount}</p>
+        <p>{data.goods}</p>
+        <p>category: {data.category}</p>
+        <p>
+          <a href={data.link} target="_blank">
+            link
+          </a>
+        </p>
+      </div>
+    );
+  }
+
+  function Entity({ entity, description }) {
+    return (
+      <p
+        onClick={() =>
+          createNode({
+            id: entity.id,
+            label: entity.name,
+            data: entity,
+          })
+        }
+      >
+        {entity.name}: {description}
+      </p>
+    );
+  }
+
   return (
     <>
       {apiData ? (
         // Render your component using the fetched data
-        <MyComponent data={apiData} />
+        <EdgeComponent data={apiData} />
       ) : (
         // Render a loading state or placeholder
         <p>Loading...</p>
@@ -76,65 +153,5 @@ function InfoBoxEdge({ id }) {
     </>
   );
 }
-
-const MyComponent = ({ data }) => {
-  if (data.category === 5) {
-    let description = data.amount
-      ? data.description.replace("money", data.amount)
-      : data.description;
-    return (
-      <div>
-        <p>{description}</p>
-        <p>
-          <a href={data.link} target="_blank">
-            link
-          </a>
-        </p>
-      </div>
-    );
-  }
-  if (data.category === 3) {
-    return (
-      <div>
-        <p>{data.description}</p>
-        <p>
-          {data.firstEntityName}: {data.firstEntityDescription}
-        </p>
-        <p>
-          {data.secondEntityName}: {data.secondEntityDescription}
-        </p>
-        {data.startDate || data.endDate ? (
-          <p>
-            {data.startDate} - {data.endDate}
-          </p>
-        ) : null}
-        <p>
-          <a href={data.link} target="_blank">
-            link
-          </a>
-        </p>
-      </div>
-    );
-  }
-  return (
-    <div>
-      <p>{data.description}</p>
-      <p>
-        {data.firstEntityName}: {data.firstEntityDescription}
-      </p>
-      <p>
-        {data.secondEntityName}: {data.secondEntityDescription}
-      </p>
-      <p>{data.amount}</p>
-      <p>{data.goods}</p>
-      <p>category: {data.category}</p>
-      <p>
-        <a href={data.link} target="_blank">
-          link
-        </a>
-      </p>
-    </div>
-  );
-};
 
 export default InfoBoxEdge;

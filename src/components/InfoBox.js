@@ -1,14 +1,13 @@
 import InfoBoxEdge from "./InfoBoxEdge";
 
-export default function InfoBox({ data }) {
+export default function InfoBox({ data, createNode }) {
   if (data.type === "edge") {
-    console.log(data.data.id);
     let edgeIds = data.data.id.split(",");
     return (
       <div key={data.data.id}>
         <h2>Edges</h2>
         {edgeIds.map((id) => {
-          return <InfoBoxEdge id={id} />;
+          return <InfoBoxEdge id={id} createNode={createNode} />;
         })}
       </div>
     );

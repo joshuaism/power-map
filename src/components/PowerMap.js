@@ -25,6 +25,20 @@ export default function PowerMap() {
     }
   }
 
+  function createNode(psuedoNode) {
+    let node = nodes.find((node) => node.id === String(psuedoNode.id));
+    if (node) {
+      expandNode(node);
+    } else {
+      console.log(
+        `node ${psuedoNode.id}: ${psuedoNode.label} not found. Creating Node.`
+      );
+      addNodesAndEdges(psuedoNode);
+      // TODO: create InfoBoxNode that is populated by node id
+      //setSelectedData({ type: "node", data: node });
+    }
+  }
+
   function expandNode(node) {
     setSelectedData({ type: "node", data: node });
     if (collapsedNodes.includes(node.id)) {
@@ -39,7 +53,7 @@ export default function PowerMap() {
       <Autocomplete
         onKeyUp={getNames}
         onChange={(event, newValue) => {
-          addNodesAndEdges(newValue);
+          createNode(newValue);
         }}
         disablePortal
         options={names}
@@ -79,7 +93,7 @@ export default function PowerMap() {
           height: "100%",
         }}
       >
-        <InfoBox data={selectedData} />
+        <InfoBox data={selectedData} createNode={createNode} />
       </div>
       <h2 style={{ position: "fixed", bottom: "0", width: "90%" }}>
         {tooltip}
