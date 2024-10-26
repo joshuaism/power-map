@@ -37,6 +37,15 @@ function NodeDetails({ id }) {
           >
             fec search
           </a>
+          &nbsp;&nbsp;
+          {node.types[0] === "Organization" ? (
+            <a
+              href={`https://joshuaism.github.io/react-fec-client?employer=${node.name}`}
+              target="_blank"
+            >
+              fec employee search
+            </a>
+          ) : null}
         </p>
         {node.summary ? <p>summary: {node.summary}</p> : null}
 
