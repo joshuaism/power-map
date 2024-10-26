@@ -10,6 +10,9 @@ function InfoBoxNode({ id, createNode }) {
         if (response.ok) {
           let json = await response.json();
           console.log(json);
+          if (json.data.attributes) {
+            json.data.attributes.link = json.data.links.self;
+          }
           setApiData(json.data.attributes);
         }
       } catch (error) {
@@ -24,6 +27,18 @@ function InfoBoxNode({ id, createNode }) {
       <div>
         <h2>{node.name}</h2>
         <p>{node.blurb}</p>
+        <p>
+          <a href={node.link} target="_blank">
+            source
+          </a>
+          &nbsp;&nbsp;
+          <a
+            href={`https://joshuaism.github.io/react-fec-client?name=${node.name}&from_year=1980`}
+            target="_blank"
+          >
+            fec search
+          </a>
+        </p>
         {node.summary ? <p>summary: {node.summary}</p> : null}
 
         {node.types.map((type) => {
