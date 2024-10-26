@@ -2,6 +2,7 @@ import { GraphCanvas } from "reagraph";
 import { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { debounce } from "@mui/material/utils";
 import useNodeService from "../hooks/useNodeService";
 import InfoBox from "./InfoBox";
 
@@ -26,6 +27,9 @@ export default function PowerMap() {
   }
 
   function createNode(psuedoNode) {
+    if (!psuedoNode) {
+      return;
+    }
     let node = nodes.find((node) => node.id === String(psuedoNode.id));
     if (node) {
       expandNode(node);
@@ -50,7 +54,8 @@ export default function PowerMap() {
     <>
       <h1>Power Map</h1>
       <Autocomplete
-        onKeyUp={getNames}
+        style={{ position: "fixed", bottom: "80%" }}
+        onKeyUp={debounce(getNames, 200)}
         onChange={(event, newValue) => {
           createNode(newValue);
         }}
@@ -65,8 +70,9 @@ export default function PowerMap() {
         style={{
           float: "left",
           position: "fixed",
+          bottom: 0,
           width: "70%",
-          height: "100%",
+          height: "80%",
         }}
       >
         <GraphCanvas
