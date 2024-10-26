@@ -1,62 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import Tab from "@mui/material/Tab";
+import TabPanel from "@mui/lab/TabPanel";
+import NodeDetails from "./NodeDetails";
+import NodeConnections from "./NodeConnections";
 
 function InfoBoxNode({ id, createNode }) {
-  const [apiData, setApiData] = useState(null);
-
-  useEffect(() => {
-    async function runOnce() {
-      try {
-        let response = await fetch(`https://littlesis.org/api/entities/${id}`);
-        if (response.ok) {
-          let json = await response.json();
-          console.log(json);
-          if (json.data.attributes) {
-            json.data.attributes.link = json.data.links.self;
-          }
-          setApiData(json.data.attributes);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-    runOnce();
-  }, []);
-
-  function NodeComponent({ node }) {
-    return (
-      <div>
-        <h2>{node.name}</h2>
-        <p>{node.blurb}</p>
-        <p>
-          <a href={node.link} target="_blank">
-            source
-          </a>
-          &nbsp;&nbsp;
-          <a
-            href={`https://joshuaism.github.io/react-fec-client?name=${node.name}&from_year=1980`}
-            target="_blank"
-          >
-            fec search
-          </a>
-        </p>
-        {node.summary ? <p>summary: {node.summary}</p> : null}
-
-        {node.types.map((type) => {
-          return <h3>{type}</h3>;
-        })}
-      </div>
-    );
-  }
+  const [openTab, setOpenTab] = useState("Details");
 
   return (
-    <>
-      {apiData ? (
-        <NodeComponent node={apiData} />
-      ) : (
-        // Render a loading state or placeholder
-        <p>Loading...</p>
-      )}
-    </>
+    <div>
+      <TabContext value={openTab}>
+        <TabList
+          onChange={(event, newValue) => {
+            setOpenTab(newValue);
+          }}
+        >
+          <Tab label="Details" value="Details" />
+          <Tab label="Connections" value="Connections" />
+        </TabList>
+        <TabPanel value="Details">
+          <NodeDetails id={id} />
+        </TabPanel>
+        <TabPanel value="Connections">
+          <NodeConnections id={id} createNode={createNode} />
+        </TabPanel>
+      </TabContext>
+    </div>
   );
 }
 
