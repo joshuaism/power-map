@@ -42,8 +42,24 @@ function NodeConnections({ id, category, createNode }) {
   }
 
   function ConnectionsComponent({ relationships }) {
+    relationships.sort((a, b) => {
+      let aCategory = a.attributes.category_id;
+      let bCategory = b.attributes.category_id;
+      if (aCategory === 5 && bCategory !== 5) {
+        return 1;
+      } else if (aCategory !== 5 && bCategory === 5) {
+        return -1;
+      }
+      return a.attributes.category_id - b.attributes.category_id;
+    });
+
     return (
       <div>
+        {relationships.length === 100 ? (
+          <p>100 or more connections</p>
+        ) : (
+          <p>{relationships.length} connections</p>
+        )}
         {relationships.map((relationship) => {
           relationship = relationship.attributes;
           return (
@@ -57,10 +73,11 @@ function NodeConnections({ id, category, createNode }) {
                     getNode(relationship.entity1_id);
                   }
                 }}
+                style={{ cursor: "pointer" }}
               >
+                {relationship.category_id} <br />
                 {relationship.description}
               </p>
-              <p>{relationship.category_id}</p>
             </>
           );
         })}
