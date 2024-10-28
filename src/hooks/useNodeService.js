@@ -29,6 +29,36 @@ function useNodeService() {
     setEdges(newEdges);
   }
 
+  function addEdge(relationship) {
+    let color = "#76957E";
+    if (relationship.category_id === 4) color = "#7C98B3";
+    if (relationship.category_id === 8) color = "#536B78";
+    let edge = {
+      id: String(relationship.id),
+      source: String(relationship.entity1_id),
+      target: String(relationship.entity2_id),
+      label: "connection",
+      size: 4,
+      fill: color,
+    };
+    setEdges([...edges, edge]);
+  }
+
+  async function addEdgeAndNode(relationship, nodeId) {
+    try {
+      let response = await fetch(
+        `https://littlesis.org/api/entities/${nodeId}`
+      );
+      if (response.ok) {
+        let json = await response.json();
+        let data = json.data.attributes;
+        let node = createNode(data);
+        setNodes([...nodes, node]);
+        addEdge(relationship);
+      }
+    } catch {}
+  }
+
   function createEdge(sourceId, data) {
     let color = "#76957E";
     if (data.connected_category_id === 4) color = "#7C98B3";
@@ -150,6 +180,8 @@ function useNodeService() {
     tooltip,
     names,
     getNames,
+    addEdge,
+    addEdgeAndNode,
     addNodesAndEdges,
     getRelationship,
     getEntityName,

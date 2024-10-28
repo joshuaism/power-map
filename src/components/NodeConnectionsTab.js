@@ -3,7 +3,7 @@ import InputLabel from "@mui/material/InputLabel";
 import NativeSelect from "@mui/material/NativeSelect";
 import NodeConnections from "./NodeConnections";
 
-function NodeConnectionsTab({ id, createNode }) {
+function NodeConnectionsTab({ id, createEdgeAndNode }) {
   const [category, setCategory] = useState(0);
 
   return (
@@ -37,7 +37,7 @@ function NodeConnectionsTab({ id, createNode }) {
         key={`${id} ${category}`}
         id={id}
         category={category}
-        createNode={createNode}
+        createEdgeAndNode={createEdgeAndNode}
       />
     </>
   );

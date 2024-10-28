@@ -1,5 +1,4 @@
 import InfoBoxEdge from "./InfoBoxEdge";
-import InfoBoxNode from "./InfoBoxNode";
 
 export default function InfoBox({ data, createNode }) {
   if (data.type === "edge") {
@@ -12,13 +11,7 @@ export default function InfoBox({ data, createNode }) {
         })}
       </div>
     );
-  } else if (data.type === "node") {
-    return (
-      <div key={data.data.id}>
-        <InfoBoxNode id={data.data.id} createNode={createNode} />
-      </div>
-    );
   } else {
-    return <></>;
+    console.log("should not be here after refactor.");
   }
 }

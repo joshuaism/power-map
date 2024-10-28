@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import { debounce } from "@mui/material/utils";
 import useNodeService from "../hooks/useNodeService";
 import InfoBox from "./InfoBox";
+import InfoBoxNode from "./InfoBoxNode";
 
 export default function PowerMap() {
   const {
@@ -13,6 +14,8 @@ export default function PowerMap() {
     names,
     tooltip,
     getNames,
+    addEdge,
+    addEdgeAndNode,
     addNodesAndEdges,
     getRelationship,
     getEntityName,
@@ -48,6 +51,35 @@ export default function PowerMap() {
       setCollapsedNodes(collapsedNodes.filter((value) => value !== node.id));
     }
     addNodesAndEdges(node);
+  }
+
+  function getInfoBox() {
+    if (selectedData) {
+      if (selectedData.type === "edge") {
+        return <InfoBox data={selectedData} createNode={createNode} />;
+      } else {
+        return (
+          <InfoBoxNode
+            key={`Node ${selectedData.data.data.id}`}
+            id={selectedData.data.data.id}
+            createEdgeAndNode={createEdgeAndNode}
+          />
+        );
+      }
+    }
+  }
+
+  function createEdgeAndNode(relationship, nodeId) {
+    let edge = edges.find((edge) => edge.id === String(relationship.id));
+    let node = nodes.find((node) => node.id === String(nodeId));
+    if (edge && node) {
+      return;
+    }
+    if (node) {
+      addEdge(relationship);
+    } else {
+      addEdgeAndNode(relationship, nodeId);
+    }
   }
 
   return (
@@ -98,7 +130,7 @@ export default function PowerMap() {
           height: "100%",
         }}
       >
-        <InfoBox data={selectedData} createNode={createNode} />
+        {getInfoBox()}
       </div>
       <h2 style={{ position: "fixed", bottom: "0", width: "90%" }}>
         {tooltip}

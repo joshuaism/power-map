@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function NodeConnections({ id, category, createNode }) {
+function NodeConnections({ id, category, createEdgeAndNode }) {
   const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
@@ -21,25 +21,6 @@ function NodeConnections({ id, category, createNode }) {
     }
     runOnce();
   }, []);
-
-  async function getNode(nodeId) {
-    try {
-      let response = await fetch(
-        `https://littlesis.org/api/entities/${nodeId}`
-      );
-      if (response.ok) {
-        let json = await response.json();
-        let node = json.data;
-        createNode({
-          id: node.id,
-          label: node.attributes.name,
-          data: node.attributes,
-        });
-      }
-    } catch (error) {
-      console.error(`Error fetching node: ${nodeId}`, error);
-    }
-  }
 
   function ConnectionsComponent({ relationships }) {
     relationships.sort((a, b) => {
@@ -68,9 +49,9 @@ function NodeConnections({ id, category, createNode }) {
                 key={relationship.id}
                 onClick={() => {
                   if (String(relationship.entity1_id) === String(id)) {
-                    getNode(relationship.entity2_id);
+                    createEdgeAndNode(relationship, relationship.entity2_id);
                   } else {
-                    getNode(relationship.entity1_id);
+                    createEdgeAndNode(relationship, relationship.entity1_id);
                   }
                 }}
                 style={{ cursor: "pointer" }}
