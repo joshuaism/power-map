@@ -4,7 +4,7 @@ import TabList from "@mui/lab/TabList";
 import Tab from "@mui/material/Tab";
 import TabPanel from "@mui/lab/TabPanel";
 import NodeDetails from "./NodeDetails";
-import NodeConnections from "./NodeConnections";
+import NodeConnectionsTab from "./NodeConnectionsTab";
 
 function InfoBoxNode({ id, createNode }) {
   const [openTab, setOpenTab] = useState("Details");
@@ -24,7 +24,7 @@ function InfoBoxNode({ id, createNode }) {
           <NodeDetails id={id} />
         </TabPanel>
         <TabPanel value="Connections">
-          <NodeConnections id={id} createNode={createNode} />
+          <NodeConnectionsTab id={id} createNode={createNode} />
         </TabPanel>
       </TabContext>
     </div>

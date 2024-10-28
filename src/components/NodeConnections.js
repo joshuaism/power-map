@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 
-function NodeConnections({ id, createNode }) {
+function NodeConnections({ id, category, createNode }) {
   const [apiData, setApiData] = useState(null);
 
   useEffect(() => {
     async function runOnce() {
       try {
-        let response = await fetch(
-          `https://littlesis.org/api/entities/${id}/relationships/?page=1`
-        );
+        let url = `https://littlesis.org/api/entities/${id}/relationships/?sort=amount&page=1`;
+        if (category > 0 && category <= 12) {
+          url = `https://littlesis.org/api/entities/${id}/relationships/?category_id=${category}&sort=amount&page=1`;
+        }
+        let response = await fetch(url);
         if (response.ok) {
           let json = await response.json();
           setApiData(json.data);
@@ -47,6 +49,7 @@ function NodeConnections({ id, createNode }) {
           return (
             <>
               <p
+                key={relationship.id}
                 onClick={() => {
                   if (String(relationship.entity1_id) === String(id)) {
                     getNode(relationship.entity2_id);
