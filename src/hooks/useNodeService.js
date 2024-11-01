@@ -1,4 +1,5 @@
 import { useState } from "react";
+import useLittleSisService from "../hooks/useLittleSisService";
 
 function useNodeService() {
   const [nodes, setNodes] = useState([]);
@@ -6,6 +7,8 @@ function useNodeService() {
   const [names, setNames] = useState([]);
   const [expandedNodes, setExpandedNodes] = useState([]);
   const [tooltip, setTooltip] = useState("");
+  const { getRelationship: getMyRelationship, searchEntitiesByName } =
+    useLittleSisService();
 
   function createEdgesAndNodes(parentNode, array) {
     let nodeMap = new Map();
@@ -128,17 +131,9 @@ function useNodeService() {
   }
 
   async function getRelationship(target) {
-    try {
-      let response = await fetch(
-        `https://littlesis.org/api/relationships/${target.id}`
-      );
-      if (response.ok) {
-        let json = await response.json();
-        setTooltip(json.data.attributes.description);
-      }
-    } catch {
-      console.log(`Failed to get relationship for id: ${target.id}`);
-    }
+    getMyRelationship(target.id, (relationship) => {
+      setTooltip(relationship.description);
+    });
   }
 
   function getEntityName(target) {
@@ -148,29 +143,21 @@ function useNodeService() {
   async function getNames(target) {
     let val = target.target._valueTracker.getValue();
     if (val) {
-      try {
-        let response = await fetch(
-          `https://littlesis.org/api/entities/search?q=${val}`
-        );
-        if (response.ok) {
-          let nameMap = new Map();
-          names.forEach((element) => {
-            nameMap.set(element.id, element);
+      searchEntitiesByName(val, (response) => {
+        let nameMap = new Map();
+        names.forEach((element) => {
+          nameMap.set(element.id, element);
+        });
+        response.data.forEach((element) => {
+          nameMap.set(element.attributes.id, {
+            label: element.attributes.name,
+            id: element.attributes.id,
+            data: element.attributes,
           });
-          let json = await response.json();
-          json.data.forEach((element) => {
-            nameMap.set(element.attributes.id, {
-              label: element.attributes.name,
-              id: element.attributes.id,
-              data: element.attributes,
-            });
-          });
-          let newNames = [...nameMap.values()];
-          setNames(newNames);
-        }
-      } catch {
-        console.log("No luck fetching search string");
-      }
+        });
+        let newNames = [...nameMap.values()];
+        setNames(newNames);
+      });
     }
   }
 

@@ -1,23 +1,13 @@
 import { useState, useEffect } from "react";
+import useLittleSisService from "../hooks/useLittleSisService";
 
 function NodeConnections({ id, category, createEdgeAndNode }) {
-  const [apiData, setApiData] = useState(null);
+  const [relationships, setRelationships] = useState([]);
+  const { getEntityRelationships } = useLittleSisService();
 
   useEffect(() => {
     async function runOnce() {
-      try {
-        let url = `https://littlesis.org/api/entities/${id}/relationships/?sort=amount&page=1`;
-        if (category > 0 && category <= 12) {
-          url = `https://littlesis.org/api/entities/${id}/relationships/?category_id=${category}&sort=amount&page=1`;
-        }
-        let response = await fetch(url);
-        if (response.ok) {
-          let json = await response.json();
-          setApiData(json.data);
-        }
-      } catch (error) {
-        console.error(`Error fetching relationships for ${id}`, error);
-      }
+      getEntityRelationships(id, category, setRelationships);
     }
     runOnce();
   }, []);
@@ -68,8 +58,8 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
 
   return (
     <>
-      {apiData ? (
-        <ConnectionsComponent relationships={apiData} />
+      {relationships ? (
+        <ConnectionsComponent relationships={relationships} />
       ) : (
         // Render a loading state or placeholder
         <p>Loading...</p>

@@ -1,22 +1,13 @@
 import { useState, useEffect } from "react";
+import useLittleSisService from "../hooks/useLittleSisService";
 
 function NodeDetails({ id }) {
-  const [apiData, setApiData] = useState(null);
+  const [entity, setEntity] = useState(null);
+  const { getEntity } = useLittleSisService();
 
   useEffect(() => {
     async function runOnce() {
-      try {
-        let response = await fetch(`https://littlesis.org/api/entities/${id}`);
-        if (response.ok) {
-          let json = await response.json();
-          if (json.data.attributes) {
-            json.data.attributes.link = json.data.links.self;
-          }
-          setApiData(json.data.attributes);
-        }
-      } catch (error) {
-        console.error(`Error fetching node details for ${id}`, error);
-      }
+      getEntity(id, setEntity);
     }
     runOnce();
   }, []);
@@ -58,8 +49,8 @@ function NodeDetails({ id }) {
 
   return (
     <>
-      {apiData ? (
-        <NodeComponent node={apiData} />
+      {entity ? (
+        <NodeComponent node={entity} />
       ) : (
         // Render a loading state or placeholder
         <p>Loading...</p>

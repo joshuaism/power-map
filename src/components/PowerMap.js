@@ -87,7 +87,7 @@ export default function PowerMap() {
       <h1>Power Map</h1>
       <Autocomplete
         style={{ position: "fixed", bottom: "80%" }}
-        onKeyUp={debounce(getNames, 200)}
+        onKeyUp={debounce(getNames, 400)}
         onChange={(event, newValue) => {
           createNode(newValue);
         }}
