@@ -113,11 +113,29 @@ function useLittleSisService() {
       });
   }
 
+  async function getConnections(id, category, callback) {
+    let url = `https://littlesis.org/api/entities/${id}/connections/`;
+    if (category) {
+      url = `https://littlesis.org/api/entities/${id}/connections/?category_id=${category}`;
+    }
+    axios
+      .get(url)
+      .then((response) => {
+        if (callback) {
+          callback(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error(`Error fetching connections for ${id}`, error);
+      });
+  }
+
   return {
     getEntity,
     getRelationship,
     getEntityRelationships,
     searchEntitiesByName,
+    getConnections,
   };
 }
 
