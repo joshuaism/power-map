@@ -151,7 +151,7 @@ function useNodeService() {
           if (connections.length < 8) {
             getConnections(target.id, null, (response) => {
               let allconnections = response.data;
-              createEdgesAndNodes(target.data, allconnections);
+              createEdgesAndNodes(target, allconnections);
               return;
             });
           }
