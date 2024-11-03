@@ -41,11 +41,11 @@ function useNodeService() {
   function addEdge(relationship) {
     let edge = {
       id: String(relationship.id),
-      source: String(relationship.firstEntityId),
-      target: String(relationship.secondEntityId),
-      label: "connection",
+      from: String(relationship.firstEntityId),
+      to: String(relationship.secondEntityId),
+      title: "connection",
       size: 4,
-      fill: getEdgeColor(relationship.category),
+      color: getEdgeColor(relationship.category),
     };
     setEdges([...edges, edge]);
   }
@@ -88,9 +88,9 @@ function useNodeService() {
         }
         let newEdge = {
           id: String(edge.id),
-          source: String(edge.node1_id),
-          target: String(edge.node2_id),
-          label: "connection",
+          from: String(edge.node1_id),
+          to: String(edge.node2_id),
+          title: "connection",
           size: 4,
           //fill: color, unknowable due to api deficiency
         };
@@ -103,11 +103,11 @@ function useNodeService() {
   function createEdge(sourceId, data) {
     return {
       id: String(data.connected_relationship_ids),
-      source: String(sourceId),
-      target: String(data.id),
-      label: "connection",
+      from: String(sourceId),
+      to: String(data.id),
+      title: "connection",
       size: 4,
-      fill: getEdgeColor(data.connected_category_id),
+      color: getEdgeColor(data.connected_category_id),
     };
   }
 
@@ -127,7 +127,8 @@ function useNodeService() {
     return {
       id: String(data.id),
       label: data.name ? String(data.name) : String(data.label),
-      fill: data.types[0] === "Person" ? "#66B3BA" : "#9AB87A",
+      title: `${data.name}<br />${data.blurb}`,
+      color: data.types[0] === "Person" ? "#66B3BA" : "#9AB87A",
       data: data,
     };
   }
@@ -163,17 +164,17 @@ function useNodeService() {
   }
 
   async function getEdgeRelationship(target) {
-    if (target.label === "connection") {
+    if (target.title === "connection") {
       getRelationship(target.id, (relationship) => {
         let newEdges = edges.map((edge) => {
           if (String(edge.id) === String(relationship.id)) {
             let newEdge = {
               id: String(relationship.id),
-              source: edge.source,
-              target: edge.target,
-              label: relationship.description,
+              from: edge.from,
+              to: edge.to,
+              title: relationship.description,
               size: 4,
-              fill: getEdgeColor(relationship.category),
+              color: getEdgeColor(relationship.category),
             };
             return newEdge;
           }
@@ -183,7 +184,7 @@ function useNodeService() {
         setTooltip(relationship.description);
       });
     } else {
-      setTooltip(target.label);
+      setTooltip(target.title);
     }
   }
 

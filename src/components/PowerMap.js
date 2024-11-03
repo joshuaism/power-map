@@ -1,4 +1,4 @@
-import { GraphCanvas } from "reagraph";
+import Graph from "react-vis-network-graph";
 import { useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -23,6 +23,72 @@ export default function PowerMap() {
   } = useNodeService();
   const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
+  const graphOptions = {
+    nodes: {
+      shape: "dot",
+      size: 20,
+      widthConstraint: { maximum: 120 },
+      font: {
+        strokeWidth: 3,
+        strokeColor: "white",
+      },
+      borderWidth: 2,
+      shadow: true,
+    },
+    edges: {
+      width: 2,
+      shadow: true,
+      smooth: {
+        type: "continuous",
+        forceDirection: "none",
+        roundness: 0.2,
+      },
+    },
+    physics: {
+      repulsion: {
+        centralGravity: 0,
+        springConstant: 0.45,
+        damping: 1,
+      },
+      minVelocity: 0.75,
+    },
+    interaction: { hover: true },
+  };
+
+  const events = {
+    select: ({ nodes: selectedNodes, edges: selectedEdges }) => {
+      if (selectedNodes.length === 1) {
+        let node = nodes.find(
+          (node) => String(node.id) === String(selectedNodes[0])
+        );
+        expandNode(node.data);
+        return;
+      }
+      if (selectedEdges.length === 1) {
+        let edge = edges.find(
+          (edge) => String(edge.id) === String(selectedEdges[0])
+        );
+        getEdgeRelationship(edge);
+        setSelectedData({ type: "edge", data: edge });
+        return;
+      }
+    },
+    doubleClick: ({ nodes, edges }) => {
+      console.log("double clicked " + nodes);
+      console.log("double clicked " + edges);
+    },
+    showPopup: (id) => {
+      let edge = edges.find((edge) => String(edge.id) === String(id));
+      if (edge) {
+        getEdgeRelationship(edge);
+        return;
+      }
+      let node = nodes.find((node) => String(node.id) === String(id));
+      if (node) {
+        getEntityName(node);
+      }
+    },
+  };
 
   function collapseNode(node) {
     if (!collapsedNodes.includes(node.id)) {
@@ -110,20 +176,12 @@ export default function PowerMap() {
           height: "80%",
         }}
       >
-        <GraphCanvas
-          onNodePointerOver={getEntityName}
-          onNodeClick={(node) => {
-            expandNode(node.data);
-          }}
+        <Graph
+          graph={{ nodes, edges }}
+          options={graphOptions}
+          events={events}
           onNodeDoubleClick={collapseNode}
           collapsedNodeIds={collapsedNodes}
-          onEdgePointerOver={getEdgeRelationship}
-          onEdgeClick={(edge) => {
-            getEdgeRelationship(edge);
-            setSelectedData({ type: "edge", data: edge });
-          }}
-          edgeArrowPosition="none"
-          draggable
           nodes={nodes}
           edges={edges}
         />
