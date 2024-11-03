@@ -51,7 +51,6 @@ function useLittleSisService() {
     axios
       .get(url)
       .then((response) => {
-        console.log(response);
         response.data.included[0].attributes.link =
           response.data.included[0].links.self;
         response.data.included[1].attributes.link =

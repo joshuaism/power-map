@@ -38,7 +38,6 @@ export default function PowerMap() {
     if (node) {
       expandNode(entity);
     } else {
-      console.log(entity);
       console.log(
         `node ${entity.id}: ${entity.name} not found. Creating Node.`
       );

@@ -21,11 +21,7 @@ function InfoBoxNode({ id, entity, createEdgeAndNode, fillNodeNetwork }) {
           <Tab label="Connections" value="Connections" />
         </TabList>
         <TabPanel value="Details">
-          <NodeDetails
-            id={id}
-            entity={entity}
-            fillNodeNetwork={fillNodeNetwork}
-          />
+          <NodeDetails entity={entity} fillNodeNetwork={fillNodeNetwork} />
         </TabPanel>
         <TabPanel value="Connections">
           <NodeConnectionsTab id={id} createEdgeAndNode={createEdgeAndNode} />

@@ -1,5 +1,4 @@
-function NodeDetails({ id, entity, fillNodeNetwork }) {
-  console.log(entity);
+function NodeDetails({ entity, fillNodeNetwork }) {
   return (
     <div>
       <h2
