@@ -38,16 +38,13 @@ function useNodeService() {
   }
 
   function addEdge(relationship) {
-    let color = "#76957E";
-    if (relationship.category_id === 4) color = "#7C98B3";
-    if (relationship.category_id === 8) color = "#536B78";
     let edge = {
       id: String(relationship.id),
       source: String(relationship.entity1_id),
       target: String(relationship.entity2_id),
       label: "connection",
       size: 4,
-      fill: color,
+      fill: getEdgeColor(relationship.category_id),
     };
     setEdges([...edges, edge]);
   }
@@ -103,20 +100,24 @@ function useNodeService() {
   }
 
   function createEdge(sourceId, data) {
-    let color = getEdgeColor(data.connected_category_id);
     return {
       id: String(data.connected_relationship_ids),
       source: String(sourceId),
       target: String(data.id),
       label: "connection",
       size: 4,
-      fill: color,
+      fill: getEdgeColor(data.connected_category_id),
     };
   }
 
   function getEdgeColor(category) {
     let color = "#76957E";
+    if (category === 1) color = "#69951E";
+    if (category === 2) color = "#F9CFF2";
+    if (category === 3) color = "#E09F3E";
     if (category === 4) color = "#7C98B3";
+    if (category === 5) color = "#DEDBCA";
+    if (category === 7) color = "#C7403B";
     if (category === 8) color = "#536B78";
     return color;
   }
@@ -165,14 +166,13 @@ function useNodeService() {
       getMyRelationship(target.id, (relationship) => {
         let newEdges = edges.map((edge) => {
           if (String(edge.id) === String(relationship.id)) {
-            let color = getEdgeColor(relationship.category);
             let newEdge = {
               id: String(relationship.id),
               source: edge.source,
               target: edge.target,
               label: relationship.description,
               size: 4,
-              fill: color,
+              fill: getEdgeColor(relationship.category),
             };
             return newEdge;
           }
