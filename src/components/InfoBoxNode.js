@@ -6,7 +6,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import NodeDetails from "./NodeDetails";
 import NodeConnectionsTab from "./NodeConnectionsTab";
 
-function InfoBoxNode({ id, createEdgeAndNode, fillNodeNetwork }) {
+function InfoBoxNode({ id, entity, createEdgeAndNode, fillNodeNetwork }) {
   const [openTab, setOpenTab] = useState("Details");
 
   return (
@@ -21,7 +21,11 @@ function InfoBoxNode({ id, createEdgeAndNode, fillNodeNetwork }) {
           <Tab label="Connections" value="Connections" />
         </TabList>
         <TabPanel value="Details">
-          <NodeDetails id={id} fillNodeNetwork={fillNodeNetwork} />
+          <NodeDetails
+            id={id}
+            entity={entity}
+            fillNodeNetwork={fillNodeNetwork}
+          />
         </TabPanel>
         <TabPanel value="Connections">
           <NodeConnectionsTab id={id} createEdgeAndNode={createEdgeAndNode} />

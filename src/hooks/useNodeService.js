@@ -26,6 +26,7 @@ function useNodeService() {
     });
     nodeMap.set(parentNode.id, createNode(parentNode));
     array.forEach((element) => {
+      element.attributes.link = element.links.self;
       let node = createNode(element.attributes);
       let edge = createEdge(parentNode.id, element.attributes);
       nodeMap.set(node.id, node);
@@ -138,7 +139,7 @@ function useNodeService() {
     if (expandedNodes.includes(target.id)) {
       return;
     }
-    console.log(`Get connections for ${target.id}: ${target.label}`);
+    console.log(`Get connections for ${target.id}: ${target.name}`);
 
     getConnections(target.id, 8, (response) => {
       let connections = [];
@@ -154,7 +155,7 @@ function useNodeService() {
               return;
             });
           }
-          createEdgesAndNodes(target.data, connections);
+          createEdgesAndNodes(target, connections);
         });
       });
     });
@@ -199,6 +200,7 @@ function useNodeService() {
           nameMap.set(element.id, element);
         });
         response.data.forEach((element) => {
+          element.attributes.link = element.links.self;
           nameMap.set(element.attributes.id, {
             label: element.attributes.name,
             id: element.attributes.id,

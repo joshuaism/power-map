@@ -51,6 +51,11 @@ function useLittleSisService() {
     axios
       .get(url)
       .then((response) => {
+        console.log(response);
+        response.data.included[0].attributes.link =
+          response.data.included[0].links.self;
+        response.data.included[1].attributes.link =
+          response.data.included[1].links.self;
         let firstEntity =
           response.data.data.attributes.entity1_id ===
           response.data.included[0].id

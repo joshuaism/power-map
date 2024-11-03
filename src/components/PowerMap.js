@@ -30,28 +30,29 @@ export default function PowerMap() {
     }
   }
 
-  function createNode(psuedoNode) {
-    if (!psuedoNode) {
+  function createNode(entity) {
+    if (!entity) {
       return;
     }
-    let node = nodes.find((node) => node.id === String(psuedoNode.id));
+    let node = nodes.find((node) => node.id === String(entity.id));
     if (node) {
-      expandNode(node);
+      expandNode(entity);
     } else {
+      console.log(entity);
       console.log(
-        `node ${psuedoNode.id}: ${psuedoNode.label} not found. Creating Node.`
+        `node ${entity.id}: ${entity.name} not found. Creating Node.`
       );
-      addNodesAndEdges(psuedoNode);
-      setSelectedData({ type: "node", data: psuedoNode });
+      addNodesAndEdges(entity);
+      setSelectedData({ type: "node", data: entity });
     }
   }
 
-  function expandNode(node) {
-    setSelectedData({ type: "node", data: node });
-    if (collapsedNodes.includes(node.id)) {
-      setCollapsedNodes(collapsedNodes.filter((value) => value !== node.id));
+  function expandNode(entity) {
+    setSelectedData({ type: "node", data: entity });
+    if (collapsedNodes.includes(entity.id)) {
+      setCollapsedNodes(collapsedNodes.filter((value) => value !== entity.id));
     }
-    addNodesAndEdges(node);
+    addNodesAndEdges(entity);
   }
 
   function getInfoBox() {
@@ -61,8 +62,9 @@ export default function PowerMap() {
       } else {
         return (
           <InfoBoxNode
-            key={`Node ${selectedData.data.data.id}`}
-            id={selectedData.data.data.id}
+            key={`Node ${selectedData.data.id}`}
+            id={selectedData.data.id}
+            entity={selectedData.data}
             createEdgeAndNode={createEdgeAndNode}
             fillNodeNetwork={fillNodeNetwork}
           />
@@ -91,7 +93,7 @@ export default function PowerMap() {
         style={{ position: "fixed", bottom: "80%" }}
         onKeyUp={debounce(getNames, 400)}
         onChange={(event, newValue) => {
-          createNode(newValue);
+          createNode(newValue.data);
         }}
         disablePortal
         options={names}
@@ -111,7 +113,9 @@ export default function PowerMap() {
       >
         <GraphCanvas
           onNodePointerOver={getEntityName}
-          onNodeClick={expandNode}
+          onNodeClick={(node) => {
+            expandNode(node.data);
+          }}
           onNodeDoubleClick={collapseNode}
           collapsedNodeIds={collapsedNodes}
           onEdgePointerOver={getEdgeRelationship}

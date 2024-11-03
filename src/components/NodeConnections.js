@@ -7,6 +7,7 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
 
   useEffect(() => {
     async function runOnce() {
+      console.log(`loading component ${id}`);
       getEntityRelationships(id, category, setRelationships);
     }
     runOnce();

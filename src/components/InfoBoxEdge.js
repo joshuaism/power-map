@@ -63,15 +63,7 @@ function InfoBoxEdge({ id, createNode }) {
 
   function Entity({ entity, description }) {
     return (
-      <p
-        onClick={() =>
-          createNode({
-            id: entity.id,
-            label: entity.name,
-            data: entity,
-          })
-        }
-      >
+      <p onClick={() => createNode(entity)}>
         {entity.name}: {description}
       </p>
     );
