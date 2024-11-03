@@ -13,21 +13,6 @@ function InfoBoxEdge({ id, createNode }) {
   }, []);
 
   function EdgeComponent({ data }) {
-    if (data.category === 5) {
-      let description = data.amount
-        ? data.description.replace("money", data.amount)
-        : data.description;
-      return (
-        <div>
-          <p>{description}</p>
-          <p>
-            <a href={data.link} target="_blank">
-              link
-            </a>
-          </p>
-        </div>
-      );
-    }
     if (data.category === 3) {
       return (
         <div>

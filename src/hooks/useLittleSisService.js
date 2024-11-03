@@ -83,6 +83,13 @@ function useLittleSisService() {
         currency: relationship.attributes.currency,
       });
     }
+    let description = relationship.attributes.description;
+    if (amount && relationship.attributes.category_id === 5) {
+      description = description.replace("money", amount);
+    }
+    if (amount && relationship.attributes.category_id === 6) {
+      description = description.replace("did/do", `did ${amount} in`);
+    }
     let options = { month: "short", day: "2-digit", year: "numeric" };
     let startDate = relationship.attributes.start_date;
     if (startDate) {
@@ -108,7 +115,7 @@ function useLittleSisService() {
       firstEntityDescription: relationship.attributes.description1,
       secondEntityDescription: relationship.attributes.description2,
       category: relationship.attributes.category_id,
-      description: relationship.attributes.description,
+      description: description,
       amount: amount,
       goods: relationship.attributes.goods,
       startDate: startDate,
