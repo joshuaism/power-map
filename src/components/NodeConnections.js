@@ -14,14 +14,14 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
 
   function ConnectionsComponent({ relationships }) {
     relationships.sort((a, b) => {
-      let aCategory = a.attributes.category_id;
-      let bCategory = b.attributes.category_id;
+      let aCategory = a.category;
+      let bCategory = b.category;
       if (aCategory === 5 && bCategory !== 5) {
         return 1;
       } else if (aCategory !== 5 && bCategory === 5) {
         return -1;
       }
-      return a.attributes.category_id - b.attributes.category_id;
+      return a.category - b.category;
     });
 
     return (
@@ -32,21 +32,23 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
           <p>{relationships.length} connections</p>
         )}
         {relationships.map((relationship) => {
-          relationship = relationship.attributes;
           return (
             <>
               <p
                 key={relationship.id}
                 onClick={() => {
-                  if (String(relationship.entity1_id) === String(id)) {
-                    createEdgeAndNode(relationship, relationship.entity2_id);
+                  if (String(relationship.firstEntityId) === String(id)) {
+                    createEdgeAndNode(
+                      relationship,
+                      relationship.secondEntityId
+                    );
                   } else {
-                    createEdgeAndNode(relationship, relationship.entity1_id);
+                    createEdgeAndNode(relationship, relationship.firstEntityId);
                   }
                 }}
                 style={{ cursor: "pointer" }}
               >
-                {relationship.category_id} <br />
+                {relationship.category} <br />
                 {relationship.description}
               </p>
             </>

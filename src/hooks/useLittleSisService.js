@@ -17,8 +17,11 @@ function useLittleSisService() {
     axios
       .get(url)
       .then((response) => {
+        let relationships = response.data.data.map((r) =>
+          populateRelationship(r)
+        );
         if (callback) {
-          callback(response.data.data);
+          callback(relationships);
         }
       })
       .catch((error) => {
@@ -48,7 +51,21 @@ function useLittleSisService() {
     axios
       .get(url)
       .then((response) => {
-        let relationship = populateRelationship(response.data);
+        let firstEntity =
+          response.data.data.attributes.entity1_id ===
+          response.data.included[0].id
+            ? response.data.included[0].attributes
+            : response.data.included[1].attributes;
+        let secondEntity =
+          response.data.data.attributes.entity2_id ===
+          response.data.included[0].id
+            ? response.data.included[0].attributes
+            : response.data.included[1].attributes;
+        let relationship = populateRelationship(
+          response.data.data,
+          firstEntity,
+          secondEntity
+        );
         if (callback) {
           callback(relationship);
         }
@@ -58,44 +75,46 @@ function useLittleSisService() {
       });
   }
 
-  function populateRelationship(json) {
-    let firstEntity =
-      json.data.attributes.entity1_id === json.included[0].id
-        ? json.included[0].attributes
-        : json.included[1].attributes;
-    let secondEntity =
-      json.data.attributes.entity2_id === json.included[0].id
-        ? json.included[0].attributes
-        : json.included[1].attributes;
-    let amount = json.data.attributes.amount;
+  function populateRelationship(relationship, firstEntity, secondEntity) {
+    let amount = relationship.attributes.amount;
     if (amount) {
       amount = amount.toLocaleString(undefined, {
         style: "currency",
-        currency: json.data.attributes.currency,
+        currency: relationship.attributes.currency,
       });
     }
     let options = { month: "short", day: "2-digit", year: "numeric" };
-    let startDate = json.data.attributes.start_date;
+    let startDate = relationship.attributes.start_date;
     if (startDate) {
       startDate = new Date(startDate).toLocaleDateString(undefined, options);
     }
-    let endDate = json.data.attributes.end_date;
+    let endDate = relationship.attributes.end_date;
     if (endDate) {
       endDate = new Date(endDate).toLocaleDateString(undefined, options);
     }
+    let lastUpdatedDate = relationship.attributes.updated_at;
+    if (lastUpdatedDate) {
+      lastUpdatedDate = new Date(lastUpdatedDate).toLocaleDateString(
+        undefined,
+        options
+      );
+    }
     return {
-      id: json.data.attributes.id,
+      id: relationship.attributes.id,
+      firstEntityId: String(relationship.attributes.entity1_id),
+      secondEntityId: String(relationship.attributes.entity2_id),
       firstEntity: firstEntity,
       secondEntity: secondEntity,
-      firstEntityDescription: json.data.attributes.description1,
-      secondEntityDescription: json.data.attributes.description2,
-      category: json.data.attributes.category_id,
-      description: json.data.attributes.description,
+      firstEntityDescription: relationship.attributes.description1,
+      secondEntityDescription: relationship.attributes.description2,
+      category: relationship.attributes.category_id,
+      description: relationship.attributes.description,
       amount: amount,
-      goods: json.data.attributes.goods,
+      goods: relationship.attributes.goods,
       startDate: startDate,
       endDate: endDate,
-      link: json.data.self,
+      lastUpdatedDate: lastUpdatedDate,
+      link: relationship.self,
     };
   }
 

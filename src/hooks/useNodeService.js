@@ -40,11 +40,11 @@ function useNodeService() {
   function addEdge(relationship) {
     let edge = {
       id: String(relationship.id),
-      source: String(relationship.entity1_id),
-      target: String(relationship.entity2_id),
+      source: String(relationship.firstEntityId),
+      target: String(relationship.secondEntityId),
       label: "connection",
       size: 4,
-      fill: getEdgeColor(relationship.category_id),
+      fill: getEdgeColor(relationship.category),
     };
     setEdges([...edges, edge]);
   }
