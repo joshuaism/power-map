@@ -16,6 +16,7 @@ function NodeDetails({ id, fillNodeNetwork }) {
     return (
       <div>
         <h2
+          title={node.id}
           onClick={() => {
             fillNodeNetwork(node.id);
           }}
