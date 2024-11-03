@@ -18,7 +18,7 @@ export default function PowerMap() {
     addEdgeAndNode,
     addNodesAndEdges,
     fillNodeNetwork,
-    getRelationship,
+    getEdgeRelationship,
     getEntityName,
   } = useNodeService();
   const [collapsedNodes, setCollapsedNodes] = useState([]);
@@ -114,9 +114,9 @@ export default function PowerMap() {
           onNodeClick={expandNode}
           onNodeDoubleClick={collapseNode}
           collapsedNodeIds={collapsedNodes}
-          onEdgePointerOver={getRelationship}
+          onEdgePointerOver={getEdgeRelationship}
           onEdgeClick={(edge) => {
-            getRelationship(edge);
+            getEdgeRelationship(edge);
             setSelectedData({ type: "edge", data: edge });
           }}
           edgeArrowPosition="none"

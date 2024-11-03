@@ -8,7 +8,7 @@ function useNodeService() {
   const [expandedNodes, setExpandedNodes] = useState([]);
   const [tooltip, setTooltip] = useState("");
   const {
-    getRelationship: getMyRelationship,
+    getRelationship,
     getEntity,
     searchEntitiesByName,
     getConnections,
@@ -161,9 +161,9 @@ function useNodeService() {
     setExpandedNodes([...expandedNodes, target.id]);
   }
 
-  async function getRelationship(target) {
+  async function getEdgeRelationship(target) {
     if (target.label === "connection") {
-      getMyRelationship(target.id, (relationship) => {
+      getRelationship(target.id, (relationship) => {
         let newEdges = edges.map((edge) => {
           if (String(edge.id) === String(relationship.id)) {
             let newEdge = {
@@ -221,7 +221,7 @@ function useNodeService() {
     addEdgeAndNode,
     fillNodeNetwork,
     addNodesAndEdges,
-    getRelationship,
+    getEdgeRelationship,
     getEntityName,
   };
 }
