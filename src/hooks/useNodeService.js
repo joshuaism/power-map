@@ -12,6 +12,7 @@ function useNodeService() {
     getEntity,
     searchEntitiesByName,
     getConnections,
+    getOligrapherEdges,
   } = useLittleSisService();
 
   function createEdgesAndNodes(parentNode, array) {
@@ -59,10 +60,50 @@ function useNodeService() {
     });
   }
 
+  async function fillNodeNetwork(nodeId) {
+    if (nodes.find((node) => node.id === nodeId)) {
+      fillMissingEdges(nodeId);
+    } else {
+      getEntity(nodeId, (response) => {
+        let node = createNode(response);
+        fillMissingEdges(nodeId);
+        setNodes([...nodes, node]);
+      });
+    }
+  }
+
+  async function fillMissingEdges(nodeId) {
+    // uses the oligrapher endpoint to fill missing edges between existing nodes
+    let ids = nodes.map((val) => val.id);
+    getOligrapherEdges(nodeId, ids, (response) => {
+      let newEdges = [];
+      response.forEach((edge) => {
+        if (edges.find((e) => e.id === String(edge.id))) {
+          // edge exists, do nothing
+          return;
+        }
+        if (edge.label.includes(" contribution")) {
+          // edge is a contribution
+          // these are mostly noise
+          console.log(`did not add ${edge.label}: (${edge.url})`);
+          return;
+        }
+        let newEdge = {
+          id: String(edge.id),
+          source: String(edge.node1_id),
+          target: String(edge.node2_id),
+          label: "connection",
+          size: 4,
+          //fill: color, unknowable due to api deficiency
+        };
+        newEdges.push(newEdge);
+      });
+      setEdges([...edges, ...newEdges]);
+    });
+  }
+
   function createEdge(sourceId, data) {
-    let color = "#76957E";
-    if (data.connected_category_id === 4) color = "#7C98B3";
-    if (data.connected_category_id === 8) color = "#536B78";
+    let color = getEdgeColor(data.connected_category_id);
     return {
       id: String(data.connected_relationship_ids),
       source: String(sourceId),
@@ -71,6 +112,13 @@ function useNodeService() {
       size: 4,
       fill: color,
     };
+  }
+
+  function getEdgeColor(category) {
+    let color = "#76957E";
+    if (category === 4) color = "#7C98B3";
+    if (category === 8) color = "#536B78";
+    return color;
   }
 
   function createNode(data) {
@@ -113,9 +161,29 @@ function useNodeService() {
   }
 
   async function getRelationship(target) {
-    getMyRelationship(target.id, (relationship) => {
-      setTooltip(relationship.description);
-    });
+    if (target.label === "connection") {
+      getMyRelationship(target.id, (relationship) => {
+        let newEdges = edges.map((edge) => {
+          if (String(edge.id) === String(relationship.id)) {
+            let color = getEdgeColor(relationship.category);
+            let newEdge = {
+              id: String(relationship.id),
+              source: edge.source,
+              target: edge.target,
+              label: relationship.description,
+              size: 4,
+              fill: color,
+            };
+            return newEdge;
+          }
+          return edge;
+        });
+        setEdges(newEdges);
+        setTooltip(relationship.description);
+      });
+    } else {
+      setTooltip(target.label);
+    }
   }
 
   function getEntityName(target) {
@@ -151,6 +219,7 @@ function useNodeService() {
     getNames,
     addEdge,
     addEdgeAndNode,
+    fillNodeNetwork,
     addNodesAndEdges,
     getRelationship,
     getEntityName,

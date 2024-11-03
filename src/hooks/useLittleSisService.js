@@ -1,4 +1,3 @@
-import { useState } from "react";
 import axios from "axios";
 import axiosRetry from "axios-retry";
 
@@ -85,6 +84,7 @@ function useLittleSisService() {
       endDate = new Date(endDate).toLocaleDateString(undefined, options);
     }
     return {
+      id: json.data.attributes.id,
       firstEntity: firstEntity,
       secondEntity: secondEntity,
       firstEntityDescription: json.data.attributes.description1,
@@ -130,12 +130,27 @@ function useLittleSisService() {
       });
   }
 
+  async function getOligrapherEdges(id, ids, callback) {
+    let url = `https://littlesis.org/oligrapher/get_edges?entity1_id=${id}&entity2_ids=${ids}`;
+    axios
+      .get(url)
+      .then((response) => {
+        if (callback) {
+          callback(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error(`Error fetching edges for ${id}`, error);
+      });
+  }
+
   return {
     getEntity,
     getRelationship,
     getEntityRelationships,
     searchEntitiesByName,
     getConnections,
+    getOligrapherEdges,
   };
 }
 

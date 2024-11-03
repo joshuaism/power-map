@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import useLittleSisService from "../hooks/useLittleSisService";
 
-function NodeDetails({ id }) {
+function NodeDetails({ id, fillNodeNetwork }) {
   const [entity, setEntity] = useState(null);
   const { getEntity } = useLittleSisService();
 
@@ -15,7 +15,13 @@ function NodeDetails({ id }) {
   function NodeComponent({ node }) {
     return (
       <div>
-        <h2>{node.name}</h2>
+        <h2
+          onClick={() => {
+            fillNodeNetwork(node.id);
+          }}
+        >
+          {node.name}
+        </h2>
         <p>{node.blurb}</p>
         <p>
           <a href={node.link} target="_blank">

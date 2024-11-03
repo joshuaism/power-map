@@ -17,6 +17,7 @@ export default function PowerMap() {
     addEdge,
     addEdgeAndNode,
     addNodesAndEdges,
+    fillNodeNetwork,
     getRelationship,
     getEntityName,
   } = useNodeService();
@@ -63,6 +64,7 @@ export default function PowerMap() {
             key={`Node ${selectedData.data.data.id}`}
             id={selectedData.data.data.id}
             createEdgeAndNode={createEdgeAndNode}
+            fillNodeNetwork={fillNodeNetwork}
           />
         );
       }
