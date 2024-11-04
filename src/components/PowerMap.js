@@ -43,16 +43,20 @@ export default function PowerMap() {
       smooth: {
         type: "continuous",
         forceDirection: "none",
-        roundness: 0.2,
+        roundness: 0.1,
       },
     },
     physics: {
-      repulsion: {
+      hierarchicalRepulsion: {
         centralGravity: 0,
-        springConstant: 0.45,
-        damping: 1,
+        springLength: 150,
+        springConstant: 0.1,
+        nodeDistance: 100,
+        damping: 0.75,
+        avoidOverlap: 1,
       },
       minVelocity: 0.75,
+      solver: "hierarchicalRepulsion",
     },
     interaction: { hover: true },
   };
@@ -187,8 +191,6 @@ export default function PowerMap() {
           graph={{ nodes, edges }}
           options={graphOptions}
           events={events}
-          nodes={nodes}
-          edges={edges}
           getNetwork={setNetwork}
         />
       </div>
