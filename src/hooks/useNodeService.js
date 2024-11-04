@@ -6,7 +6,6 @@ function useNodeService() {
   const [edges, setEdges] = useState([]);
   const [names, setNames] = useState([]);
   const [expandedNodes, setExpandedNodes] = useState([]);
-  const [tooltip, setTooltip] = useState("");
   const {
     getRelationship,
     getEntity,
@@ -180,15 +179,8 @@ function useNodeService() {
           return edge;
         });
         setEdges(newEdges);
-        setTooltip(relationship.description);
       });
-    } else {
-      setTooltip(target.label);
     }
-  }
-
-  function getEntityName(target) {
-    setTooltip(target.label);
   }
 
   async function getNames(target) {
@@ -245,7 +237,6 @@ function useNodeService() {
   return {
     nodes,
     edges,
-    tooltip,
     names,
     getNames,
     addEdge,
@@ -253,7 +244,6 @@ function useNodeService() {
     fillNodeNetwork,
     addNodesAndEdges,
     getEdgeRelationship,
-    getEntityName,
     deleteNode,
   };
 }

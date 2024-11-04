@@ -1,5 +1,5 @@
 import { GraphCanvas } from "reagraph";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { debounce } from "@mui/material/utils";
@@ -12,16 +12,33 @@ export default function PowerMap() {
     nodes,
     edges,
     names,
-    tooltip,
     getNames,
     addEdge,
     addEdgeAndNode,
     addNodesAndEdges,
     fillNodeNetwork,
     getEdgeRelationship,
-    getEntityName,
     deleteNode,
   } = useNodeService();
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [tooltip, setTooltip] = useState(null);
+
+  useEffect(() => {
+    const handleWindowMouseMove = (event) => {
+      debounce(
+        setCoords({
+          x: event.clientX,
+          y: event.clientY,
+        }),
+        700
+      );
+    };
+    window.addEventListener("mousemove", handleWindowMouseMove);
+
+    return () => {
+      window.removeEventListener("mousemove", handleWindowMouseMove);
+    };
+  }, []);
   const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
 
@@ -75,6 +92,40 @@ export default function PowerMap() {
     }
   }
 
+  function getTooltip() {
+    if (tooltip) {
+      let label = tooltip.data.label;
+      if (tooltip.type === "edge") {
+        label = tooltip.data.label;
+      } else {
+        label = (
+          <span>
+            {tooltip.data.data.name}
+            <br />
+            {tooltip.data.data.blurb}
+          </span>
+        );
+      }
+      return (
+        <div
+          id={`${tooltip.type}-${tooltip.id}`}
+          style={{
+            background: "white",
+            border: "solid 1px blue",
+            borderRadius: 2,
+            padding: 5,
+            textAlign: "left",
+            position: "fixed",
+            top: coords ? coords.y + 10 : 0,
+            left: coords ? coords.x : 0,
+          }}
+        >
+          {label}
+        </div>
+      );
+    } else return <div id={`empty-tooltip`}></div>;
+  }
+
   function createEdgeAndNode(relationship, nodeId) {
     let edge = edges.find((edge) => edge.id === String(relationship.id));
     let node = nodes.find((node) => node.id === String(nodeId));
@@ -121,13 +172,18 @@ export default function PowerMap() {
               // clear overrides so dragged nodes react to layout changes like any other node
             }
           }
-          onNodePointerOver={getEntityName}
+          onNodePointerOver={(node) => setTooltip({ type: "node", data: node })}
+          onNodePointerOut={() => setTooltip(null)}
           onNodeClick={(node) => {
             expandNode(node.data);
           }}
           onNodeDoubleClick={collapseNode}
           collapsedNodeIds={collapsedNodes}
-          onEdgePointerOver={getEdgeRelationship}
+          onEdgePointerOver={(edge) => {
+            getEdgeRelationship(edge);
+            setTooltip({ type: "edge", data: edge });
+          }}
+          onEdgePointerOut={() => setTooltip(null)}
           onEdgeClick={(edge) => {
             getEdgeRelationship(edge);
             setSelectedData({ type: "edge", data: edge });
@@ -150,9 +206,7 @@ export default function PowerMap() {
       >
         {getInfoBox()}
       </div>
-      <h2 style={{ position: "fixed", bottom: "0", width: "90%" }}>
-        {tooltip}
-      </h2>
+      {getTooltip()}
     </>
   );
 }
