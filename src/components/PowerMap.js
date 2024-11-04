@@ -36,7 +36,8 @@ export default function PowerMap() {
       shadow: true,
     },
     edges: {
-      width: 2,
+      arrows: "",
+      width: 6,
       shadow: true,
       smooth: {
         type: "continuous",
