@@ -49,8 +49,10 @@ export default function PowerMap() {
 
   function expandNode(entity) {
     setSelectedData({ type: "node", data: entity });
-    if (collapsedNodes.includes(entity.id)) {
-      setCollapsedNodes(collapsedNodes.filter((value) => value !== entity.id));
+    if (collapsedNodes.includes(String(entity.id))) {
+      setCollapsedNodes(
+        collapsedNodes.filter((value) => value !== String(entity.id))
+      );
     }
     addNodesAndEdges(entity);
   }
