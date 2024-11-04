@@ -20,6 +20,7 @@ export default function PowerMap() {
     fillNodeNetwork,
     getEdgeRelationship,
     getEntityName,
+    deleteNode,
   } = useNodeService();
   const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
@@ -131,6 +132,9 @@ export default function PowerMap() {
           }}
           edgeArrowPosition="none"
           draggable
+          contextMenu={({ data }) => {
+            deleteNode(data.data);
+          }}
           nodes={nodes}
           edges={edges}
         />

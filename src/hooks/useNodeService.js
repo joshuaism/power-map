@@ -213,6 +213,35 @@ function useNodeService() {
     }
   }
 
+  function deleteNode(entity) {
+    // verify object is entity
+    if (!entity.types) {
+      return;
+    }
+    if (
+      entity.types[0].toUpperCase() !== "PERSON" &&
+      entity.types[0].toUpperCase() !== "ORGANIZATION"
+    ) {
+      return;
+    }
+    // start removing node
+    let newNodes = nodes.filter(
+      (node) => String(node.id) !== String(entity.id)
+    );
+    let newEdges = edges.filter(
+      (edge) =>
+        String(edge.source) !== String(entity.id) &&
+        String(edge.target) !== String(entity.id)
+    );
+    let newExpandedNodes = expandedNodes.filter(
+      (id) => String(id) !== String(entity.id)
+    );
+    console.log(newExpandedNodes);
+    setEdges(newEdges);
+    setNodes(newNodes);
+    setExpandedNodes(newExpandedNodes);
+  }
+
   return {
     nodes,
     edges,
@@ -225,6 +254,7 @@ function useNodeService() {
     addNodesAndEdges,
     getEdgeRelationship,
     getEntityName,
+    deleteNode,
   };
 }
 
