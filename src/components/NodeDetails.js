@@ -1,6 +1,6 @@
 function NodeDetails({ entity, fillNodeNetwork }) {
   return (
-    <div>
+    <div style={{ overflowY: "auto", maxHeight: "77vh" }}>
       <h2
         title={entity.id}
         onClick={() => {
@@ -31,7 +31,11 @@ function NodeDetails({ entity, fillNodeNetwork }) {
           </a>
         ) : null}
       </p>
-      {entity.summary ? <p>summary: {entity.summary}</p> : null}
+      {entity.summary ? (
+        <p style={{ textAlign: "left", width: "95%" }}>
+          summary: {entity.summary}
+        </p>
+      ) : null}
 
       {entity.types.map((type) => {
         return <h3>{type}</h3>;
