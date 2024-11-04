@@ -21,8 +21,8 @@ export default function PowerMap() {
     getEdgeRelationship,
     getEntityName,
   } = useNodeService();
-  const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
+  const [network, setNetwork] = useState(null);
   const graphOptions = {
     nodes: {
       shape: "dot",
@@ -61,7 +61,11 @@ export default function PowerMap() {
         let node = nodes.find(
           (node) => String(node.id) === String(selectedNodes[0])
         );
-        expandNode(node.data);
+        if (node) {
+          expandNode(node.data);
+        } else {
+          network.openCluster(selectedNodes[0]);
+        }
         return;
       }
       if (selectedEdges.length === 1) {
@@ -73,9 +77,11 @@ export default function PowerMap() {
         return;
       }
     },
-    doubleClick: ({ nodes, edges }) => {
-      console.log("double clicked " + nodes);
-      console.log("double clicked " + edges);
+    doubleClick: ({ nodes: selectedNodes }) => {
+      if (selectedNodes.length === 1) {
+        network.clusterByConnection(selectedNodes[0]);
+        return;
+      }
     },
     showPopup: (id) => {
       let edge = edges.find((edge) => String(edge.id) === String(id));
@@ -89,12 +95,6 @@ export default function PowerMap() {
       }
     },
   };
-
-  function collapseNode(node) {
-    if (!collapsedNodes.includes(node.id)) {
-      setCollapsedNodes([...collapsedNodes, node.id]);
-    }
-  }
 
   function createNode(entity) {
     if (!entity) {
@@ -114,9 +114,6 @@ export default function PowerMap() {
 
   function expandNode(entity) {
     setSelectedData({ type: "node", data: entity });
-    if (collapsedNodes.includes(entity.id)) {
-      setCollapsedNodes(collapsedNodes.filter((value) => value !== entity.id));
-    }
     addNodesAndEdges(entity);
   }
 
@@ -180,10 +177,9 @@ export default function PowerMap() {
           graph={{ nodes, edges }}
           options={graphOptions}
           events={events}
-          onNodeDoubleClick={collapseNode}
-          collapsedNodeIds={collapsedNodes}
           nodes={nodes}
           edges={edges}
+          getNetwork={setNetwork}
         />
       </div>
       <div
