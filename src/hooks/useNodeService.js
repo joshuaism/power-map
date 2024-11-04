@@ -214,6 +214,22 @@ function useNodeService() {
     }
   }
 
+  function deleteNode(nodeId) {
+    let newNodes = nodes.filter((node) => String(node.id) !== String(nodeId));
+    let newEdges = edges.filter(
+      (edge) =>
+        String(edge.to) !== String(nodeId) &&
+        String(edge.from) !== String(nodeId)
+    );
+    let newExpandedNodes = expandedNodes.filter(
+      (id) => String(id) !== String(nodeId)
+    );
+    console.log(newExpandedNodes);
+    setEdges(newEdges);
+    setNodes(newNodes);
+    setExpandedNodes(newExpandedNodes);
+  }
+
   return {
     nodes,
     edges,
@@ -226,6 +242,7 @@ function useNodeService() {
     addNodesAndEdges,
     getEdgeRelationship,
     getEntityName,
+    deleteNode,
   };
 }
 

@@ -20,6 +20,7 @@ export default function PowerMap() {
     fillNodeNetwork,
     getEdgeRelationship,
     getEntityName,
+    deleteNode,
   } = useNodeService();
   const [selectedData, setSelectedData] = useState("");
   const [network, setNetwork] = useState(null);
@@ -94,6 +95,12 @@ export default function PowerMap() {
       if (node) {
         getEntityName(node);
       }
+    },
+    oncontext: ({ pointer, event }) => {
+      event.preventDefault();
+      let pos = { x: pointer.DOM.x, y: pointer.DOM.y };
+      let nodeId = network.getNodeAt(pos);
+      deleteNode(nodeId);
     },
   };
 
