@@ -111,6 +111,11 @@ export default function PowerMap() {
         }}
       >
         <GraphCanvas
+          layoutOverrides={
+            {
+              // clear overrides so dragged nodes react to layout changes like any other node
+            }
+          }
           onNodePointerOver={getEntityName}
           onNodeClick={(node) => {
             expandNode(node.data);
