@@ -120,7 +120,11 @@ function useNodeService() {
     if (category === 5) color = "#DEDBCA";
     if (category === 7) color = "#C7403B";
     if (category === 8) color = "#536B78";
-    return color;
+    return {
+      color: color,
+      highlight: color,
+      hover: "#FF0000",
+    };
   }
 
   function createNode(data) {
