@@ -163,7 +163,9 @@ export default function PowerMap() {
         style={{ position: "fixed", bottom: "80%" }}
         onKeyUp={debounce(getNames, 400)}
         onChange={(event, newValue) => {
-          createNode(newValue.data);
+          if (newValue) {
+            createNode(newValue.data);
+          }
         }}
         disablePortal
         options={names}
