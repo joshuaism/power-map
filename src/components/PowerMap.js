@@ -41,6 +41,7 @@ export default function PowerMap() {
   }, []);
   const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
+  const [hideInfoBox, setHideInfoBox] = useState(true);
 
   function collapseNode(node) {
     if (!collapsedNodes.includes(node.id)) {
@@ -81,7 +82,7 @@ export default function PowerMap() {
       } else {
         return (
           <InfoBoxNode
-            key={`Node ${selectedData.data.id}`}
+            key={`Node-${selectedData.data.id}`}
             id={selectedData.data.id}
             entity={selectedData.data}
             createEdgeAndNode={createEdgeAndNode}
@@ -108,7 +109,7 @@ export default function PowerMap() {
       }
       return (
         <div
-          id={`${tooltip.type}-${tooltip.id}`}
+          key={`${tooltip.type}-${tooltip.data.id}`}
           style={{
             background: "white",
             border: "solid 1px blue",
@@ -123,7 +124,7 @@ export default function PowerMap() {
           {label}
         </div>
       );
-    } else return <div id={`empty-tooltip`}></div>;
+    } else return <div key={`empty-tooltip`}></div>;
   }
 
   function createEdgeAndNode(relationship, nodeId) {
@@ -162,7 +163,7 @@ export default function PowerMap() {
           float: "left",
           position: "fixed",
           bottom: 0,
-          width: "70%",
+          width: "100%",
           height: "80%",
         }}
       >
@@ -197,14 +198,15 @@ export default function PowerMap() {
           edges={edges}
         />
       </div>
-      <div
-        style={{
-          float: "right",
-          width: "30%",
-          height: "100%",
-        }}
-      >
+      <div id="info-box" class="info-box" hidden={hideInfoBox}>
         {getInfoBox()}
+      </div>
+      <div
+        id="info-box-tab"
+        class={hideInfoBox ? "hidden-info-box-tab" : "shown-info-box-tab"}
+        onClick={() => setHideInfoBox(!hideInfoBox)}
+      >
+        <h1 style={{ minWidth: "2em" }}>{hideInfoBox ? "+" : "-"}</h1>
       </div>
       {getTooltip()}
     </>
