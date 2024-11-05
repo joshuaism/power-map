@@ -9,8 +9,8 @@ function NodeDetails({ entity, fillNodeNetwork }) {
       >
         {entity.name}
       </h2>
-      <p>{entity.blurb}</p>
-      <p>
+      <h4>{entity.blurb}</h4>
+      <h4>
         <a href={entity.link} target="_blank">
           source
         </a>
@@ -30,7 +30,7 @@ function NodeDetails({ entity, fillNodeNetwork }) {
             fec employee search
           </a>
         ) : null}
-      </p>
+      </h4>
       {entity.summary ? (
         <p style={{ textAlign: "left", width: "95%" }}>
           summary: {entity.summary}

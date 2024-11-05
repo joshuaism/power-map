@@ -28,9 +28,9 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
     return (
       <div>
         {relationships.length === 100 ? (
-          <p>100 or more connections</p>
+          <h3>100 or more connections</h3>
         ) : (
-          <p>{relationships.length} connections</p>
+          <h3>{relationships.length} connections</h3>
         )}
         {relationships.map((relationship) => {
           return (
@@ -47,7 +47,7 @@ function NodeConnections({ id, category, createEdgeAndNode }) {
                     createEdgeAndNode(relationship, relationship.firstEntityId);
                   }
                 }}
-                style={{ cursor: "pointer" }}
+                style={{ textAlign: "center", cursor: "pointer" }}
               >
                 {relationship.category} <br />
                 {relationship.description}
