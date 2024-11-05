@@ -7,7 +7,12 @@ function NodeConnectionsTab({ id, createEdgeAndNode }) {
   const [category, setCategory] = useState(0);
 
   return (
-    <>
+    <div
+      style={{
+        overflowY: "scroll",
+        maxHeight: "77vh",
+      }}
+    >
       <InputLabel variant="standard" htmlFor="uncontrolled-native">
         Category
       </InputLabel>
@@ -34,12 +39,12 @@ function NodeConnectionsTab({ id, createEdgeAndNode }) {
         <option value={12}>Uncategorized Relations</option>
       </NativeSelect>
       <NodeConnections
-        key={`${id} ${category}`}
+        key={`${id}-${category}`}
         id={id}
         category={category}
         createEdgeAndNode={createEdgeAndNode}
       />
-    </>
+    </div>
   );
 }
 
