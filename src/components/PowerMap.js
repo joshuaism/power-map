@@ -1,5 +1,5 @@
 import { GraphCanvas } from "reagraph";
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { debounce } from "@mui/material/utils";
@@ -42,6 +42,7 @@ export default function PowerMap() {
   const [collapsedNodes, setCollapsedNodes] = useState([]);
   const [selectedData, setSelectedData] = useState("");
   const [hideInfoBox, setHideInfoBox] = useState(true);
+  const graphRef = useRef(null);
 
   function collapseNode(node) {
     if (!collapsedNodes.includes(node.id)) {
@@ -85,6 +86,7 @@ export default function PowerMap() {
             key={`Node-${selectedData.data.id}`}
             id={selectedData.data.id}
             entity={selectedData.data}
+            centerGraph={centerGraph}
             createEdgeAndNode={createEdgeAndNode}
             fillNodeNetwork={fillNodeNetwork}
           />
@@ -131,13 +133,26 @@ export default function PowerMap() {
     let edge = edges.find((edge) => edge.id === String(relationship.id));
     let node = nodes.find((node) => node.id === String(nodeId));
     if (edge && node) {
+      graphRef.current?.fitNodesInView([
+        String(relationship.firstEntityId),
+        String(relationship.secondEntityId),
+      ]);
       return;
     }
     if (node) {
       addEdge(relationship);
+      graphRef.current?.fitNodesInView([
+        String(relationship.firstEntityId),
+        String(relationship.secondEntityId),
+      ]);
     } else {
       addEdgeAndNode(relationship, nodeId);
+      // TODO: figure out how to center on nodes as they are added
     }
+  }
+
+  function centerGraph(nodeId) {
+    graphRef.current?.fitNodesInView([String(nodeId)]);
   }
 
   return (
@@ -168,6 +183,7 @@ export default function PowerMap() {
         }}
       >
         <GraphCanvas
+          ref={graphRef}
           layoutOverrides={
             {
               // clear overrides so dragged nodes react to layout changes like any other node

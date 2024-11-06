@@ -1,10 +1,11 @@
-function NodeDetails({ entity, fillNodeNetwork }) {
+function NodeDetails({ entity, centerGraph, fillNodeNetwork }) {
   return (
     <div style={{ overflowY: "auto", maxHeight: "77vh" }}>
       <h2
-        title={entity.id}
+        style={{ cursor: "pointer" }}
+        title={`center map on ${entity.name}`}
         onClick={() => {
-          fillNodeNetwork(entity.id);
+          centerGraph(entity.id);
         }}
       >
         {entity.name}
@@ -30,6 +31,15 @@ function NodeDetails({ entity, fillNodeNetwork }) {
             fec employee search
           </a>
         ) : null}
+      </h4>
+      <h4
+        style={{ cursor: "pointer" }}
+        title="add missing connections between nodes already on the map"
+        onClick={() => {
+          fillNodeNetwork(entity.id);
+        }}
+      >
+        remap connections
       </h4>
       {entity.summary ? (
         <p style={{ textAlign: "left", width: "95%" }}>
