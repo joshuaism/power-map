@@ -13,33 +13,8 @@ function InfoBoxEdge({ id, createNode }) {
   }, []);
 
   function EdgeComponent({ data }) {
-    if (data.category === 3) {
-      return (
-        <div>
-          <p>{data.description}</p>
-          <Entity
-            entity={data.firstEntity}
-            description={data.firstEntityDescription}
-          />
-          <Entity
-            entity={data.secondEntity}
-            description={data.secondEntityDescription}
-          />
-          {data.startDate || data.endDate ? (
-            <p>
-              {data.startDate} - {data.endDate}
-            </p>
-          ) : null}
-          <p>
-            <a href={data.link} target="_blank">
-              link
-            </a>
-          </p>
-        </div>
-      );
-    }
     return (
-      <div>
+      <div style={{ padding: "20px" }}>
         <p>{data.description}</p>
         <Entity
           entity={data.firstEntity}
@@ -49,8 +24,12 @@ function InfoBoxEdge({ id, createNode }) {
           entity={data.secondEntity}
           description={data.secondEntityDescription}
         />
-        <p>{data.amount}</p>
-        <p>{data.goods}</p>
+        {data.startDate || data.endDate ? (
+          <p>
+            {data.startDate} - {data.endDate}
+          </p>
+        ) : null}
+        <p>updated: {data.lastUpdatedDate}</p>
         <p>category: {data.category}</p>
         <p>
           <a href={data.link} target="_blank">
