@@ -140,17 +140,26 @@ function useNodeService() {
     }
     console.log(`Get connections for ${target.id}: ${target.name}`);
 
-    getConnections(target.id, 8, (response) => {
+    if (target.types[0].toUpperCase() === "PERSON") {
+      populateConnections(target, 1, 4, 8);
+    } else {
+      populateConnections(target, 1, 6, 10);
+    }
+    setExpandedNodes([...expandedNodes, target.id]);
+  }
+
+  async function populateConnections(target, cat1, cat2, cat3) {
+    getConnections(target.id, cat1, (response) => {
       let connections = [];
       connections.push(...response.data);
-      getConnections(target.id, 4, (response) => {
+      getConnections(target.id, cat2, (response) => {
         connections.push(...response.data);
-        getConnections(target.id, 1, (response) => {
+        getConnections(target.id, cat3, (response) => {
           connections.push(...response.data);
-          if (connections.length < 8) {
+          if (connections.length < 5) {
             getConnections(target.id, null, (response) => {
-              let allconnections = response.data;
-              createEdgesAndNodes(target, allconnections);
+              connections.push(...response.data);
+              createEdgesAndNodes(target, connections);
               return;
             });
           }
@@ -158,7 +167,6 @@ function useNodeService() {
         });
       });
     });
-    setExpandedNodes([...expandedNodes, target.id]);
   }
 
   async function getEdgeRelationship(target) {
