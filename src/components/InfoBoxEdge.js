@@ -29,11 +29,14 @@ function InfoBoxEdge({ id, createNode }) {
             {data.startDate} - {data.endDate}
           </p>
         ) : null}
+        {data.amount ? <p>amount: {data.amount}</p> : null}
+        <p>{data.goods}</p>
         <p>updated: {data.lastUpdatedDate}</p>
         <p>category: {data.category}</p>
+
         <p>
           <a href={data.link} target="_blank">
-            link
+            source
           </a>
         </p>
       </div>
